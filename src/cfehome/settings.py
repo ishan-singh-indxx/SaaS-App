@@ -15,6 +15,30 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#Email Config
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = config("EMAIL_HOST", cast=str, default="smtp.gmail.com")
+EMAIL_PORT = config("EMAIL_PORT", cast=str, default="587") # Recommended
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", cast=str, default=None)
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", cast=str, default=None)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)  # Use EMAIL_PORT 587 for TLS
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)  # Use MAIL_PORT 465 for SSL
+
+#500 errors
+ADMIN_USER_NAME=config("ADMIN_USER_NAME", default="Admin user")
+ADMIN_USER_EMAIL=config("ADMIN_USER_EMAIL", default=None)
+
+MANAGERS=[]
+ADMINS=[]
+if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
+    # 500 errors are emailed to these users
+    ADMINS +=[
+        (f'{ADMIN_USER_NAME}', f'{ADMIN_USER_EMAIL}')
+    ]
+    MANAGERS=ADMINS
+
+# ADMINS = [('Ishan', 'ishansingh.iitk@gmail.com')]
+# MANAGERS = ADMINS
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -41,8 +65,14 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [ 
+    'slippers',
+    "allauth_ui",
+    'widget_tweaks',
     'visits',
     'commando',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +82,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # Add the account middleware:
+    "allauth.account.middleware.AccountMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -118,6 +150,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# DJANGO Allauth Config
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION="mandatory"
+ACCOUNT_EMAIL_SUBJECT_PREFIX="SaaS App"
+
+
+AUTHENTICATION_BACKENDS = [
+    # ...
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+    # ...
+]
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
