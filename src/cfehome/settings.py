@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -172,6 +173,9 @@ AUTHENTICATION_BACKENDS = [
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
+     'github':{
+          "VERIFIED_EMAIL":True
+     },
     "google":{
         "VERIFIED_EMAIL":True
     }
