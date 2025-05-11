@@ -65,6 +65,8 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [ 
+    'subscriptions',
+    'profiles',
     'slippers',
     "allauth_ui",
     'widget_tweaks',
